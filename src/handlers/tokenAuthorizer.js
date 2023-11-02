@@ -21,7 +21,7 @@ exports.handler = async (event) => {
         return allow(customerId, event.methodArn)
     } catch (error) {
         console.error("Erro inesperado", error)
-        return deny("", event.methodArn)
+        return deny("*", event.methodArn)
     } finally {
         if (connection) connection.end()
     }
