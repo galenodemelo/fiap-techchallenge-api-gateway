@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  StageName:
+    Description: Etapa de implantação. Utilizada também para definir ambiente de execução.
+    Type: String
+    AllowedValues:
+      - prod
+      - stage
+      - dev
+    Default: dev
+
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref StageName
+
+Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref StageName
