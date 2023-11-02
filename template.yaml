@@ -33,19 +33,19 @@ Resources:
     Properties:
       StageName: !Ref StageName
       Auth:
-        DefaultAuthorizer: CognitoAuthorizer
-        ApiKeyRequired: true
+        DefaultAuthorizer: TokenAuthorizer
+        ApiKeyRequired: false
         Authorizers:
-          CognitoAuthorizer:
+          TokenAuthorizer:
             FunctionPayloadType: TOKEN
-            FunctionArn: !GetAtt CognitoAuthorizerFunction.Arn
+            FunctionArn: !GetAtt TokenAuthorizerFunction.Arn
             Identity:
               Header: Authorization # Deverá conter o CPF do cliente
 
-  CognitoAuthorizerFunction:
+  TokenAuthorizerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/cognitoAuthorizer.handler
+      Handler: src/handlers/tokenAuthorizer.handler
       Runtime: nodejs18.x
       Architectures:
         - x86_64
