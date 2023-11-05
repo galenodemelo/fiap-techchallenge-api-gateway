@@ -34,6 +34,9 @@ Parameters:
 
 Globals:
   Function:
+    Runtime: nodejs18.x
+    Architectures:
+      - x86_64
     Timeout: 30
     MemorySize: 128
     Environment:
@@ -67,11 +70,9 @@ Resources:
 
   TokenAuthorizerFunction:
     Type: AWS::Serverless::Function
+    Name: "fiap-lambda-authorizer"
     Properties:
       Handler: src/handlers/tokenAuthorizer.handler
-      Runtime: nodejs18.x
-      Architectures:
-        - x86_64
 
   # Usado apenas para testes locais, não é criado em prod
   DestinationTestFunction:
@@ -79,13 +80,10 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/destinationTest.handler
-      Runtime: nodejs18.x
-      Architectures:
-        - x86_64
       Events:
         TestAuthorizer:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref ApiGateway
+            ApiId: !Ref ApiGateway
             Path: /test
             Method: GET
