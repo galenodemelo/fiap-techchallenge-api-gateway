@@ -29,8 +29,15 @@ Parameters:
     Description: Nome do banco de dados
     Type: String
 
+  SecurityGroupId:
+    Description: ID do security group atrelado à VPC e ao Load Balancer
     Type: String
-    Default: "256"
+    Default: ""
+
+  LoadBalancerSubnetIdList:
+    Description: Lista de subnets do Load Balancer
+    Type: CommaDelimitedList
+    Default: ""
 
 Globals:
   Function:
@@ -54,6 +61,14 @@ Conditions:
     - dev
 
 Resources:
+  VpcLink:
+    Type: AWS::ApiGatewayV2::VpcLink
+    Properties:
+      Name: "fiap-vpc-link-api-gateway-load-balancer"
+      SecurityGroupIds:
+        - !Ref SecurityGroupId
+      SubnetIds: !Ref LoadBalancerSubnetIdList
+
   ApiGateway:
     Type: AWS::Serverless::HttpApi
     Properties:
