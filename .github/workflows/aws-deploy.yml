@@ -33,7 +33,7 @@ jobs:
             --resolve-s3 \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
             --region us-east-1 \
-            --stack-name "fiap-api-gateway-authorizer"
+            --stack-name "fiap-api-gateway-authorizer" \
             --parameter-overrides \
               'StageName=prod \
                DatabaseHost="${{ secrets.DATABASE_HOST }}" \
