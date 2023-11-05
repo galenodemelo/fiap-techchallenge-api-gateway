@@ -52,18 +52,18 @@ Conditions:
 
 Resources:
   ApiGateway:
-    Type: AWS::Serverless::Api
+    Type: AWS::Serverless::HttpApi
     Properties:
       StageName: !Ref StageName
       Auth:
         DefaultAuthorizer: TokenAuthorizer
-        ApiKeyRequired: false
         Authorizers:
           TokenAuthorizer:
-            FunctionPayloadType: TOKEN
             FunctionArn: !GetAtt TokenAuthorizerFunction.Arn
+            AuthorizerPayloadFormatVersion: "1.0"
             Identity:
-              Header: Authorization # Deverá conter o CPF do cliente
+              Headers:
+                - Authorization # Deverá conter o CPF do cliente
 
   TokenAuthorizerFunction:
     Type: AWS::Serverless::Function
