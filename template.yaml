@@ -39,6 +39,11 @@ Parameters:
     Type: CommaDelimitedList
     Default: ""
 
+  LoadBalancerListenerArn:
+    Description: ARN do Listener do Load Balancer
+    Type: String
+    Default: ""
+
 Globals:
   Function:
     Runtime: nodejs18.x
@@ -82,6 +87,25 @@ Resources:
             Identity:
               Headers:
                 - Authorization # Deverá conter o CPF do cliente
+      DefinitionBody:
+        openapi: "3.0.1"
+        info:
+          title: "fiap-api-gateway"
+          version: "2023-11-05 10:10:00UTC"
+        paths:
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              isDefaultRoute: true
+              responses:
+                default:
+                  description: "Default response for ANY /"
+              x-amazon-apigateway-integration:
+                payloadFormatVersion: "1.0"
+                httpMethod: "ANY"
+                type: "http_proxy"
+                connectionType: "VPC_LINK"
+                connectionId: !GetAtt VpcLink.VpcLinkId
+                uri: !Ref LoadBalancerListenerArn
 
   TokenAuthorizerFunction:
     Type: AWS::Serverless::Function
