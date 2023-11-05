@@ -73,9 +73,9 @@ Resources:
       Architectures:
         - x86_64
 
-  # Usado apenas para testes locais
+  # Usado apenas para testes locais, não é criado em prod
   DestinationTestFunction:
-    Condition: DevelopmentOnlyResources # Evita criar o Lambda em produć
+    Condition: DevelopmentOnlyResources # Evita criar o Lambda em prod
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/destinationTest.handler
