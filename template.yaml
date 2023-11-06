@@ -146,3 +146,19 @@ Resources:
             ApiId: !Ref ApiGateway
             Path: /test
             Method: GET
+
+  # Usado apenas para testes locais, não é criado em prod
+  CustomerTestFunction:
+    Condition: DevelopmentOnlyResources # Evita criar o Lambda em prod
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/destinationTest.handler
+      Events:
+        TestAuthorizer:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /customer
+            Method: POST
+            Auth:
+              Authorizer: NONE
