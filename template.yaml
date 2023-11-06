@@ -92,13 +92,24 @@ Resources:
         info:
           title: "fiap-api-gateway"
           version: "2023-11-05 10:10:00UTC"
+        components:
+          securitySchemes:
+            TokenAuthorizer:
+              type: "apiKey"
+              in: "header"
+              name: "Authorization"
+              x-amazon-apigateway-authorizer:
+                identitySource: "$request.header.Authorization"
+                authorizerUri: !GetAtt TokenAuthorizerFunction.Arn
+                authorizerPayloadFormatVersion: "1.0"
+                type: "token"
+                enableSimpleResponses: false
         paths:
           /{proxy+}:
             x-amazon-apigateway-any-method:
               isDefaultRoute: true
-              responses:
-                default:
-                  description: "Default response for ANY /"
+              security:
+                - TokenAuthorizer: [ ]
               x-amazon-apigateway-integration:
                 payloadFormatVersion: "1.0"
                 httpMethod: "ANY"
