@@ -117,6 +117,15 @@ Resources:
                 connectionType: "VPC_LINK"
                 connectionId: !GetAtt VpcLink.VpcLinkId
                 uri: !Ref LoadBalancerListenerArn
+          /customer:
+            post:
+              x-amazon-apigateway-integration:
+                payloadFormatVersion: "1.0"
+                httpMethod: "ANY"
+                type: "http_proxy"
+                connectionType: "VPC_LINK"
+                connectionId: !GetAtt VpcLink.VpcLinkId
+                uri: !Ref LoadBalancerListenerArn
 
   TokenAuthorizerFunction:
     Type: AWS::Serverless::Function
