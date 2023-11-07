@@ -10,6 +10,10 @@ Parameters:
       - stage
       - dev
     Default: dev
+  MemorySize:
+    Description: Tamanho da memória da Function.
+    Type: String
+    Default: "256"
 
 Globals:
   Function:
@@ -18,8 +22,49 @@ Globals:
       Variables:
         ENVIRONMENT: !Ref StageName
 
+Conditions:
+  DevelopmentOnlyResources: !Equals
+    - !Ref StageName
+    - dev
+
 Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref StageName
+      Auth:
+        DefaultAuthorizer: TokenAuthorizer
+        ApiKeyRequired: false
+        Authorizers:
+          TokenAuthorizer:
+            FunctionPayloadType: TOKEN
+            FunctionArn: !GetAtt TokenAuthorizerFunction.Arn
+            Identity:
+              Header: Authorization # Deverá conter o CPF do cliente
+
+  TokenAuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/tokenAuthorizer.handler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: !Ref MemorySize
+
+  # Usado apenas para testes locais
+  DestinationTestFunction:
+    Condition: DevelopmentOnlyResources # Evita criar o Lambda em produć
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/destinationTest.handler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: !Ref MemorySize
+      Events:
+        TestAuthorizer:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /test
+            Method: GET

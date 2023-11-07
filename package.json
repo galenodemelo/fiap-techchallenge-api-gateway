@@ -1,0 +1,11 @@
+{
+    "name": "fiap-challenge-api-gateway",
+    "description": "API Gateway AWS com Lambda Authorizer para o Tech Challenge do curso da pós-tech FIAP",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+    },
+    "devDependencies": {
+    }
+}
+
