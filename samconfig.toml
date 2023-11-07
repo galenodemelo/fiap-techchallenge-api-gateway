@@ -4,7 +4,8 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "api-gateway-authorizer"
+stack_name = "fiap-api-gateway-authorizer"
+region = "us-east-1"
 
 [default.build.parameters]
 cached = true

@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # Escolhida por ser mais barata
+
+      - name: Faz o build da imagem
+        run: |
+          sam build --use-container
+
+      - name: Realiza o deploy, evitando prompts no console que necessitam de um humano
+        run: |
+          sam deploy --template-file .aws-sam/build/template.yaml \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --no-disable-rollback \
+            --resolve-s3 \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+            --region us-east-1 \
+            --stack-name "fiap-api-gateway-authorizer" \
+            --parameter-overrides \
+              'StageName=prod \
+               DatabaseHost="${{ secrets.DATABASE_HOST }}" \
+               DatabasePort="${{ secrets.DATABASE_PORT }}" \
+               DatabaseUser="${{ secrets.DATABASE_USER }}" \
+               DatabasePass="${{ secrets.DATABASE_PASS }}" \
+               DatabaseName="${{ secrets.DATABASE_NAME }}" \
+               SecurityGroupId="${{ secrets.SECURITY_GROUP_ID }}" \
+               LoadBalancerSubnetIdList="${{ secrets.LOAD_BALANCER_SUBNET_ID_LIST }}" \
+               LoadBalancerListenerArn="${{ secrets.LOAD_BALANCER_LISTENER_ARN }}"'
