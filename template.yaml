@@ -92,13 +92,33 @@ Resources:
         info:
           title: "fiap-api-gateway"
           version: "2023-11-05 10:10:00UTC"
+        components:
+          securitySchemes:
+            TokenAuthorizer:
+              type: "apiKey"
+              in: "header"
+              name: "Authorization"
+              x-amazon-apigateway-authorizer:
+                identitySource: "$request.header.Authorization"
+                authorizerUri: !GetAtt TokenAuthorizerFunction.Arn
+                authorizerPayloadFormatVersion: "1.0"
+                type: "token"
+                enableSimpleResponses: false
         paths:
           /{proxy+}:
             x-amazon-apigateway-any-method:
               isDefaultRoute: true
-              responses:
-                default:
-                  description: "Default response for ANY /"
+              security:
+                - TokenAuthorizer: [ ]
+              x-amazon-apigateway-integration:
+                payloadFormatVersion: "1.0"
+                httpMethod: "ANY"
+                type: "http_proxy"
+                connectionType: "VPC_LINK"
+                connectionId: !GetAtt VpcLink.VpcLinkId
+                uri: !Ref LoadBalancerListenerArn
+          /customer:
+            post:
               x-amazon-apigateway-integration:
                 payloadFormatVersion: "1.0"
                 httpMethod: "ANY"
@@ -126,3 +146,19 @@ Resources:
             ApiId: !Ref ApiGateway
             Path: /test
             Method: GET
+
+  # Usado apenas para testes locais, não é criado em prod
+  CustomerTestFunction:
+    Condition: DevelopmentOnlyResources # Evita criar o Lambda em prod
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/destinationTest.handler
+      Events:
+        TestAuthorizer:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ApiGateway
+            Path: /customer
+            Method: POST
+            Auth:
+              Authorizer: NONE
