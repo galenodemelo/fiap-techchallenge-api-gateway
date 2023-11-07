@@ -21,6 +21,6 @@ exports.allow = (principalId, resource) => {
     return generatePolicy("Allow", principalId, resource)
 }
 
-exports.deny = (resource) => {
-    return generatePolicy("Deny", null, resource)
+exports.deny = (principalId, resource) => {
+    return generatePolicy("Deny", principalId, resource)
 }
