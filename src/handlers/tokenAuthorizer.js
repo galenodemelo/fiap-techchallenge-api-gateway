@@ -11,7 +11,7 @@ exports.handler = async (event) => {
         if (!token) throw new Error("Obrigatório informar um token")
 
         connection = await getConnection()
-        const [rows] = await connection.query("SELECT id FROM customer_ca WHERE cpf = ? LIMIT 1", [token])
+        const [rows] = await connection.query("SELECT id FROM customer WHERE cpf = ? LIMIT 1", [token])
         if (!rows.length) {
             console.error(`Cliente com CPF [${token}] não encontrado`)
             return deny(token, event.methodArn)
