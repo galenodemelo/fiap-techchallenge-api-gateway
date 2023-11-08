@@ -77,7 +77,6 @@ Resources:
   ApiGateway:
     Type: AWS::Serverless::HttpApi
     Properties:
-      StageName: !Ref StageName
       Auth:
         DefaultAuthorizer: TokenAuthorizer
         EnableIamAuthorizer: true
