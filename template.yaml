@@ -80,6 +80,7 @@ Resources:
       StageName: !Ref StageName
       Auth:
         DefaultAuthorizer: TokenAuthorizer
+        EnableIamAuthorizer: true
         Authorizers:
           TokenAuthorizer:
             FunctionArn: !GetAtt TokenAuthorizerFunction.Arn
